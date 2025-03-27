@@ -25,21 +25,20 @@ function isActress(data: unknown): data is Actress {
     typeof data.name === 'string' &&
     'birth_year' in data &&
     typeof data.birth_year === 'number' &&
-    'death_year' in data &&
-    (typeof data.death_year === 'number' || typeof data.death_year === undefined) &&
     'biography' in data &&
     typeof data.biography === 'string' &&
     'image' in data &&
     typeof data.image === 'string' &&
     'most_famous_movies' in data &&
     Array.isArray(data.most_famous_movies) &&
-    data.most_famous_movies.length === 3 &&
+    data.most_famous_movies.length >= 1 &&  // flessibilità nel numero
     data.most_famous_movies.every(movie => typeof movie === 'string') &&
     'awards' in data &&
     typeof data.awards === 'string' &&
     'nationality' in data &&
     typeof data.nationality === 'string' &&
-    ['American', 'British', 'Australian', 'Israeli-American', 'South African', 'French', 'Indian', 'Israeli', 'Spanish', 'South Korean', 'Chinese'].includes(data.nationality)
+    ['American', 'British', 'Australian', 'Israeli-American', 'South African', 'French', 'Indian', 'Israeli', 'Spanish', 'South Korean', 'Chinese'].includes(data.nationality) &&
+    (!('death_year' in data) || typeof data.death_year === 'number' || data.death_year === null)
   ) {
     return true
   }
@@ -70,6 +69,38 @@ async function getActress(id: number): Promise<Actress | null> {
   }
 }
 
+// funzione di test
 const marilyn = await getActress(6)
 console.log(marilyn)
+
+
+
+// Funzione di chiamata per tutte le attrici
+async function getAllActresses(): Promise<Actress[]> {
+  try {
+    const response = await fetch('https://boolean-spec-frontend.vercel.app/freetestapi/actresses')
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`)
+    }
+    const data = await response.json(); // Risolvo la chiamata API e ottengo i dati se la response è ok
+
+    // Verifico che data sia un array di attrici valide
+    if (Array.isArray(data) && data.every(isActress)) {
+      return data // Ritorno l'array di attrici
+    } else {
+      throw new Error('Invalid data received') // Lancio un errore se i dati non sono validi
+    }
+  } catch (err) {
+    if (err instanceof Error) {
+      console.error('Error fetching actresses:', err.message) // Stampo l'errore se è di tipo errore
+    } else {
+      console.error('Unknown error:', err) // Gestisco errori sconosciuti
+    }
+    return [] // Ritorno un array vuoto in caso di errore
+  }
+}
+
+// funzione di test
+const actresses = await getAllActresses()
+console.log(actresses)
 
