@@ -104,3 +104,21 @@ async function getAllActresses(): Promise<Actress[]> {
 const actresses = await getAllActresses()
 console.log(actresses)
 
+
+
+// Funzione per cercare attrici per id in parallelo
+async function getActresses(ids: number[]): Promise<(Actress | null)[]> {
+  // Promise.all per chiamare getActress in parallelo per ogni id
+  const results = await Promise.all(
+    ids.map(id => getActress(id)) // La funzione getActress viene invocata per ogni id
+  )
+
+  return results // Restituisce un array contenente oggetti Actress o null
+}
+
+
+// funzione di test
+const actressesById = await getActresses([1, 2, 3, 4, 5])
+console.log(actressesById)
+
+
