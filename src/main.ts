@@ -10,8 +10,18 @@ type Person = {
 type Actress = Person & {
   most_famous_movies: [string, string, string],
   awards: string,
-  nationality: 'American' | 'British' | 'Australian' | 'Israeli-American' | 'South African' |
-  'French' | 'Indian' | 'Israeli' | 'Spanish' | 'South Korean' | 'Chinese'
+  nationality:
+  | 'American'
+  | 'British'
+  | 'Australian'
+  | 'Israeli-American'
+  | 'South African'
+  | 'French'
+  | 'Indian'
+  | 'Israeli'
+  | 'Spanish'
+  | 'South Korean'
+  | 'Chinese'
 }
 
 // Type guard per Actress
@@ -31,7 +41,7 @@ function isActress(data: unknown): data is Actress {
     typeof data.image === 'string' &&
     'most_famous_movies' in data &&
     Array.isArray(data.most_famous_movies) &&
-    data.most_famous_movies.length >= 1 &&  // flessibilità nel numero
+    data.most_famous_movies.length === 3 &&
     data.most_famous_movies.every(movie => typeof movie === 'string') &&
     'awards' in data &&
     typeof data.awards === 'string' &&
